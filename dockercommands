@@ -1,0 +1,18 @@
+cd msa
+docker build --tag msaimage .
+cd ..
+cd mta
+docker build --tag mtaimage .
+cd ..
+cd bluebook
+docker build --tag bluebookimage .
+cd ..
+
+docker network create --subnet 192.168.1.0/24 courseworknet
+
+docker run --name msacontainer1 --net courseworknet --ip 192.168.1.8 --detach --publish 3000:8888 --security-opt apparmor=unconfined msaimage
+docker run --name mtacontainer1--net courseworknet --ip 192.168.1.8 --detach --publish 3001:8888 --security-opt apparmor=unconfined mtaimage
+docker run --name msacontainer2 --net courseworknet --ip 192.168.1.7 --detach --publish 3000:8888 --security-opt apparmor=unconfined msaimage
+docker run --name mtacontainer2 --net courseworknet --ip 192.168.1.7 --detach --publish 3001:8888 --security-opt apparmor=unconfined mtaimage
+docker run --name bluebookcontainer --net courseworknet --ip 192.168.1.6 --detach --publish 3002:8888 --security-opt apparmor=unconfined bluebookimage
+
